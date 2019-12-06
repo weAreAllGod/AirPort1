@@ -29,7 +29,11 @@ if __name__ == '__main__':
     dataId = 0#0表示所有的数据，1表示国内的数据，2表示国际的数据
     # 基础数据
     dataBase = myDataBase()
-    data = dataBase.getDataThree().iloc[:150,:]
+    initalData,data = dataBase.getDataThree()
+    ##对于初始航班只关心停在近机位的,近机位从101到169
+    initalData=initalData.loc[initalData["parkinggate"].isin(range(101,169))]
+    data=data.iloc[:150,:]
+    lenInitalData=len(initalData)
     # 国内航班停机位27,国际航班停机位38
     ##除了互斥时间外，还考虑了近机位数量限制，机位的类型限制,类型包括C,D,E,F四种类型的停机位
     ##近机位C,D,E,F数量[23,34,6,2]
@@ -40,10 +44,14 @@ if __name__ == '__main__':
     nationalNumber=sum(nationalType)
     internationalNumber =sum(internationalType)
     allNumber = nationalNumber+internationalNumber
+
+
+
     #进行去除过夜航班的操作，过夜航班不放在近机位
     minAtime=data["atime"].min()
-    # mydata = data
-    mydata = data.loc[data["dtime"]<(pd.Timestamp(str(minAtime)[:10]+" 00:00:00")+pd.Timedelta("1 days"))]
+    data = data.loc[data["dtime"]<(pd.Timestamp(str(minAtime)[:10]+" 00:00:00")+pd.Timedelta("1 days"))]
+    # 将初始条件合并到要分配的航班中去
+    mydata = pd.concat([initalData, data]).reset_index(drop=True)
     mydata=mydata.sort_values(by=["atime"]).reset_index(drop=True)
     bridgeNumber = allNumber
     # 人工分配结果

@@ -74,7 +74,8 @@ class myDataBase:
         apassenger=[]
         dpassenger=[]
         nation=[]
-        dataFrame = pd.DataFrame(columns=["aflightno", "dflightno", "flightnum", "atime", "dtime","mdl","apassenger","dpassenger","nation"])
+        parkinggate=[]
+        dataFrame = pd.DataFrame(columns=["aflightno", "dflightno", "flightnum", "atime", "dtime","mdl","apassenger","dpassenger","nation","parkinggate"])
         for everyJson in data:
             aflightno.append(everyJson["flightNumber"])
             dflightno.append(everyJson["flightNumberDep"])
@@ -85,6 +86,7 @@ class myDataBase:
             apassenger.append(int(everyJson["arrivepeople"]))
             dpassenger.append(int(everyJson["leavepeople"]))
             nation.append(0 if everyJson["nation"] in ["D","D/D"] else 1)
+            parkinggate.append(everyJson["parkinggate"])
         dataFrame["aflightno"] = pd.Series(aflightno)
         dataFrame["dflightno"] = pd.Series(dflightno)
         dataFrame["flightnum"] = pd.Series(flightnum)
@@ -94,13 +96,14 @@ class myDataBase:
         dataFrame["apassenger"] = pd.Series(apassenger)
         dataFrame["dpassenger"] = pd.Series(dpassenger)
         dataFrame["nation"] = pd.Series(nation)
-
-
+        dataFrame["parkinggate"] = pd.Series(parkinggate)
         dataFrame =dataFrame.dropna(subset=["aflightno", "atime", "dtime"])
-        dataFrame=dataFrame.loc[dataFrame ["atime"] > pd._libs.tslibs.Timestamp("2019-11-19 05:00:00")]
+        initialData=dataFrame.loc[(dataFrame ["atime"] < pd._libs.tslibs.Timestamp("2019-11-19 05:00:00"))&(dataFrame ["dtime"] > pd._libs.tslibs.Timestamp("2019-11-19 05:00:00"))]
+        dataFrame=dataFrame.loc[dataFrame ["atime"] >= pd._libs.tslibs.Timestamp("2019-11-19 05:00:00")]
         dataFrame =dataFrame.sort_values(by=["atime"]).reset_index(drop=True)
+        initialData = initialData.sort_values(by=["atime"]).reset_index(drop=True)
         # dataFrame.to_csv("../state/data/dataOne.csv")
-        return dataFrame
+        return initialData,dataFrame
     def getPossibleOne(self):
         possible = pd.read_json("../state/data/possibleOne.json")
         result = possible["combination"].to_list()
