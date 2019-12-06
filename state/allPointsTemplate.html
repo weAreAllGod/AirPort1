@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    　<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=U4DcRLP4vRQUUdgkTXgm5MEsKXI5i8WC"></script>
+    <title>停车位概览</title>
+</head>
+<body>
+    <div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+var pointsAlready = [[new BMap.Point(102.93698812961037,25.09843790118407),['311']],
+[new BMap.Point(102.93747499867874,25.0980781628181),['312']],
+[new BMap.Point(102.937954465607,25.09759240148677),['313']],
+[new BMap.Point(102.94387754005413,25.104283367968655),['314']],
+[new BMap.Point(102.9441599335259,25.104667966904678),['315']],
+[new BMap.Point(102.94441902540177,25.104950453527557),['316']],
+[new BMap.Point(102.94467811869225,25.105231559738627),['317']],
+[new BMap.Point(102.94496808452344,25.105617815936572),['318']],
+[new BMap.Point(102.93020033047135,25.10323872535144),['321']],
+[new BMap.Point(102.92961428288687,25.103471517835793),['322']],
+[new BMap.Point(102.92903587680472,25.103872737691496),['323']],
+[new BMap.Point(102.93474921910925,25.110919740295433),['324']],
+[new BMap.Point(102.93497005714602,25.111245867053842),['325']],
+[new BMap.Point(102.93526731019563,25.11138252217357),['326']],
+[new BMap.Point(102.93551083301242,25.11169762831425),['327']],
+[new BMap.Point(102.9357773169902,25.112013108429892),['328']],
+[new BMap.Point(102.9394170384105,25.11139000303768),['329']],
+[new BMap.Point(102.93982851317624,25.11116627413834),['330']],
+[new BMap.Point(102.95467954120632,25.11673249053242),['501']],
+[new BMap.Point(102.95439726838103,25.11632861306929),['502']],
+[new BMap.Point(102.95412230857569,25.116048991056637),['503']],
+[new BMap.Point(102.95377861914517,25.115646017743636),['504']],
+[new BMap.Point(102.95353479453829,25.11533594133648),['505']],
+[new BMap.Point(102.95316054764847,25.11494037893836),['506']],
+[new BMap.Point(102.9529394637434,25.114630711742603),['507']],
+[new BMap.Point(102.95258823816523,25.114267530675775),['508']],
+[new BMap.Point(102.95156571685027,25.11301835555837),['509']],
+[new BMap.Point(102.95119180609998,25.1126239489913),['510']],
+[new BMap.Point(102.95095533308863,25.112315720467457),['511']],
+[new BMap.Point(102.9506046981492,25.111904635227788),['512']],
+[new BMap.Point(102.95032983648038,25.111635465296285),['513']],
+[new BMap.Point(102.94997111208762,25.111254806864476),['514']],
+[new BMap.Point(102.94970436511602,25.11093626477856),['515']],
+[new BMap.Point(102.94943705131392,25.110514586900088),['516']],
+[new BMap.Point(102.94767653338229,25.111866155894614),['519']],
+[new BMap.Point(102.94785901449511,25.111760101425258),['519R']],
+[new BMap.Point(102.94750108722353,25.111981784982635),['519L']],
+[new BMap.Point(102.94708940254696,25.11236055283141),['520']],
+[new BMap.Point(102.94168733847792,25.113792644392348),['521']],
+[new BMap.Point(102.94183973848125,25.11368081782483),['521L']],
+[new BMap.Point(102.94153520643283,25.113879512404825),['521R']],
+[new BMap.Point(102.94105531400074,25.114226251276246),['522']],
+[new BMap.Point(102.9412682470312,25.114153648517455),['522L']],
+[new BMap.Point(102.94092588543168,25.11433081859471),['522R']],
+[new BMap.Point(102.94332543918948,25.115136304575426),['523L']],
+[new BMap.Point(102.94267007846003,25.115562480980977),['524L']],
+[new BMap.Point(102.9430130244065,25.11531057903457),['524R']],
+[new BMap.Point(102.94201527651676,25.115980409040088),['525L']],
+[new BMap.Point(102.94235037754967,25.11578188646695),['525R']],
+[new BMap.Point(102.94153533300799,25.116267782032466),['526']],
+[new BMap.Point(102.9413523833199,25.116400273433324),['526L']],
+[new BMap.Point(102.94167234315411,25.116167388041852),['526R']],
+[new BMap.Point(102.93994341008194,25.1171922821446),['531']],
+[new BMap.Point(102.94032411724471,25.11759168195493),['532']],
+[new BMap.Point(102.94059052944024,25.117875042550114),['533']],
+[new BMap.Point(102.9409485317421,25.11829329678698),['534']],
+[new BMap.Point(102.94119223928134,25.118596881805523),['535']],
+[new BMap.Point(102.94151213480153,25.119006625172098),['536']],
+[new BMap.Point(102.94175583768903,25.119313975643056),['537']],
+[new BMap.Point(102.94211383516149,25.119709347613927),['538']],
+[new BMap.Point(102.94314970427789,25.120960858146383),['539']],
+[new BMap.Point(102.94349256546221,25.121359384725125),['540']],
+[new BMap.Point(102.9437665354786,25.121661627789603),['541']],
+[new BMap.Point(102.9441094023126,25.122048692770388),['542']],
+[new BMap.Point(102.94434552709015,25.122374999274534),['543']],
+[new BMap.Point(102.94468055668432,25.122765675956963),['544']],
+[new BMap.Point(102.94700430133695,25.12533178286251),['545']],
+[new BMap.Point(102.9473777698639,25.125692235060622),['546']],
+[new BMap.Point(102.94761365662558,25.12599136188694),['547']],
+[new BMap.Point(102.94794143018012,25.12637984510211),['548']],
+[new BMap.Point(102.94820031751915,25.1266583264282),['549']],
+[new BMap.Point(102.94920636098573,25.127903349556306),['550']],
+[new BMap.Point(102.9494577004365,25.128178038079753),['551']],
+[new BMap.Point(102.94978522650169,25.128590611492132),['552']],
+[new BMap.Point(102.95005982934777,25.12887689657709),['553']],
+[new BMap.Point(102.95041793412832,25.129288100309427),['554']],
+[new BMap.Point(102.95737427132725,25.121582454525445),['701']],
+[new BMap.Point(102.95760326670798,25.121886033033665),['702']],
+[new BMap.Point(102.95788589314914,25.122166892365524),['703']],
+[new BMap.Point(102.95815309079524,25.122457349213008),['704']],
+[new BMap.Point(102.95855053864709,25.122836488295473),['705']],
+[new BMap.Point(102.95883287528214,25.123271744791733),['706']],
+[new BMap.Point(102.95912311245472,25.12360445469821),['707']],
+[new BMap.Point(102.96039141494839,25.124413295005),['708L']],
+[new BMap.Point(102.95824533884087,25.120922704989233),['709']],
+[new BMap.Point(102.95492377035342,25.118804762350923),['710']],
+[new BMap.Point(102.95517546790771,25.118958148152917),['711']],
+[new BMap.Point(102.95544285531281,25.11923586355422),['712']],
+[new BMap.Point(102.95569481513057,25.119549470554205),['713']],
+[new BMap.Point(102.95596194798556,25.119824912127545),['714']],
+[new BMap.Point(102.95619091399737,25.120119243838346),['715']],
+[new BMap.Point(102.95642770994169,25.120529967379262),['716']],
+[new BMap.Point(102.95667184926995,25.12081050496811),['717']],
+[new BMap.Point(102.95693141995538,25.121123938399087),['718']],
+[new BMap.Point(102.95793210338307,25.1205155731491),['719']],
+[new BMap.Point(102.96553876376463,25.123243843549876),['720']],
+[new BMap.Point(102.95738226083365,25.119863858761114),['720B']],
+[new BMap.Point(102.95767248370433,25.120160560080635),['720A']],
+[new BMap.Point(102.95661859293034,25.119015186013797),['721']],
+[new BMap.Point(102.9381608065071,25.112388691334036),['722']],
+[new BMap.Point(102.93797789661416,25.112471185065306),['722a']],
+[new BMap.Point(102.93829020362219,25.11224022315867),['722b']],
+[new BMap.Point(102.93864818536409,25.112063160698582),['723']],
+[new BMap.Point(102.9391050366266,25.11176397203777),['724']],
+[new BMap.Point(102.93160234298767,25.105072526003017),['b9']],
+[new BMap.Point(102.93122955755057,25.105325513661693),['b11']],
+[new BMap.Point(102.930810839672,25.10561634555013),['b13']],
+[new BMap.Point(102.93078799999734,25.10586965646605),['b14']],
+[new BMap.Point(102.93128313601454,25.105980996170192),['b12']],
+[new BMap.Point(102.93183880288676,25.1055933409658),['b10']],
+[new BMap.Point(102.93233339610448,25.105240863977617),['b8']],
+[new BMap.Point(102.93277477680532,25.104954867071594),['b7']],
+[new BMap.Point(102.93318587934412,25.10466407716341),['b6']],
+[new BMap.Point(102.93365749140973,25.1043612598904),['b5']],
+[new BMap.Point(102.93444933653899,25.104149635713107),['b2']],
+[new BMap.Point(102.93538576480594,25.104011222044804),['b1']],
+[new BMap.Point(102.93609411337142,25.10428885876445),['b15']],
+[new BMap.Point(102.93669560200156,25.10481816653752),['b17']],
+[new BMap.Point(102.93713766004475,25.105341084403815),['b25']],
+[new BMap.Point(102.93748806522383,25.10577650661956),['b27']],
+[new BMap.Point(102.93775511787605,25.106507914092557),['b46']],
+[new BMap.Point(102.9377021500936,25.107060229866295),['b47']],
+[new BMap.Point(102.93747380748172,25.107607529369883),['b49']],
+[new BMap.Point(102.93729888361736,25.107993727950042),['b51']],
+[new BMap.Point(102.93713179818207,25.108404738513524),['b53']],
+[new BMap.Point(102.93694118726086,25.108788506862375),['b55']],
+[new BMap.Point(102.93675110148313,25.109149764342934),['b57']],
+[new BMap.Point(102.93653802734612,25.109466426784365),['b59']],
+[new BMap.Point(102.9365916165611,25.109736414428248),['b62']],
+[new BMap.Point(102.93673619604395,25.10981146626334),['b60']],
+[new BMap.Point(102.93694157721174,25.10991056398892),['b58']],
+[new BMap.Point(102.93728436664098,25.109633986386328),['b56']],
+[new BMap.Point(102.93741362171575,25.109144235941688),['b54']],
+[new BMap.Point(102.93761121642198,25.108632258647884),['b52']],
+[new BMap.Point(102.93782448045201,25.10814576043696),['b50']],
+[new BMap.Point(102.93808308100078,25.107553371767626),['b48']],
+[new BMap.Point(102.94013882610186,25.106423640489012),['b32']],
+[new BMap.Point(102.94070976530513,25.106358919841345),['b34']],
+[new BMap.Point(102.94124290012329,25.106320402083988),['b36']],
+[new BMap.Point(102.94185983499023,25.10630619262392),['b38']],
+[new BMap.Point(102.94227142589203,25.106334294846707),['b40']],
+[new BMap.Point(102.94248453402288,25.106103188966554),['b44']],
+[new BMap.Point(102.94240817839474,25.105819315466395),['b45']],
+[new BMap.Point(102.94232427911635,25.10558524212654),['b43']],
+[new BMap.Point(102.94210324449972,25.10563119082854),['b41']],
+[new BMap.Point(102.9417073912059,25.105718077679363),['b39']],
+[new BMap.Point(102.94128100196602,25.10578871284926),['b37']],
+[new BMap.Point(102.94080868171966,25.105855056075843),['b35']],
+[new BMap.Point(102.94039742364349,25.10588814379139),['b33']],
+[new BMap.Point(102.93992511276389,25.105937319172618),['b31']],
+[new BMap.Point(102.9394606479249,25.10599011326607),['b30']],
+[new BMap.Point(102.93889726133236,25.105976717104895),['b29']],
+[new BMap.Point(102.93822702943454,25.105722545464317),['b28']],
+[new BMap.Point(102.93767040809632,25.105193995744738),['b26']],
+[new BMap.Point(102.93734298265466,25.10480289712784),['b18']],
+[new BMap.Point(102.93686276223781,25.104191728025548),['b16']],
+[new BMap.Point(102.93663401855916,25.10348343681517),['b64']],
+[new BMap.Point(102.93667921406373,25.102747844182684),['b65']],
+[new BMap.Point(102.93708986832226,25.10187573983031),['b68']],
+[new BMap.Point(102.93747035318965,25.10155633870269),['b69']],
+[new BMap.Point(102.93793459352679,25.101232317584856),['b70']],
+[new BMap.Point(102.93834562914451,25.100943506777043),['b71']],
+[new BMap.Point(102.93884794165615,25.100584254390075),['b73']],
+[new BMap.Point(102.93941103570778,25.10020288824169),['b75']],
+[new BMap.Point(102.93970019220923,25.09988954181714),['b77']],
+[new BMap.Point(102.93934974000261,25.099547494015543),['b78']],
+[new BMap.Point(102.93894627105131,25.099830500585522),['b76']],
+[new BMap.Point(102.93857331492673,25.100085221888857),['b74']],
+[new BMap.Point(102.93820036256322,25.100343999553058),['b72']],
+[new BMap.Point(102.93473843507147,25.104122019001515),['b4']],
+[new BMap.Point(102.93506582012216,25.10396019039251),['b3']],
+[new BMap.Point(102.93682536656438,25.104944529028415),['b19']],
+[new BMap.Point(102.93727472951757,25.105490352769767),['b21']],
+[new BMap.Point(102.93761785935814,25.105969605023844),['b23']],
+[new BMap.Point(102.93782316632787,25.10537200187443),['b24']],
+[new BMap.Point(102.93751060974046,25.10499091422328),['b22']],
+[new BMap.Point(102.93709151716862,25.10448193657487),['b20']],
+[new BMap.Point(102.93677033940587,25.102442473944574),['b66']],
+[new BMap.Point(102.93693006159796,25.102094263922506),['b67']],
+[new BMap.Point(102.93327152537843,25.10861254385507),['p1']],
+[new BMap.Point(102.93416954446678,25.107578686140332),['p2']],
+[new BMap.Point(102.94169799758166,25.10263483056624),['p3']],
+[new BMap.Point(102.94067758753108,25.103002395678594),['p4']],
+[new BMap.Point(102.9386463454618,25.107317221069593),['p5']],
+[new BMap.Point(102.93914123754257,25.10704901269442),['p6']],
+];
+// var points = [];
+//地图初始化
+var bm = new BMap.Map("allmap",{mapType: BMAP_HYBRID_MAP});
+bm.centerAndZoom(new BMap.Point(102.936386,25.107091), 17);
+bm.enableScrollWheelZoom(true);
+bm.addControl(new BMap.NavigationControl()); //平移缩放控件
+bm.addControl(new BMap.ScaleControl()); //比例尺
+bm.addControl(new BMap.OverviewMapControl()); //缩略地图
+bm.addControl(new BMap.MapTypeControl()); //地图类型
+bm.setCurrentCity("昆明"); // 仅当设置城市信息时，MapTypeControl的切换功能才能可用
+bm.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+bm.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+for (var i = 0; i < pointsAlready.length; i++) {
+    var newMarker=new BMap.Marker(pointsAlready[i][0]);
+    // newMarker.setLabel(new BMap.Label(i,{offset:new BMap.Size(20,-10)})
+    newMarker.setLabel(new BMap.Label(''+pointsAlready[i][1],{offset:new BMap.Size(20,-10)}));
+
+    bm.addOverlay(newMarker);
+    // bm.setCenter(points[i]);
+}
+var myIcon = new BMap.Icon("./car.png", new BMap.Size(20,-10),{anchor:new BMap.Size(15,15)} );
+
+// 全局变量
+var idOfCars=[];
+var marksList=[];
+for (var i = 0; i < points.length; i++) {
+    // ,{icon:myIcon}
+var newMarker=new BMap.Marker(points[i][0],{icon:myIcon});
+
+idOfCars.push(points[i][1][0].slice(0,-20));
+// newMarker.setLabel(new BMap.Label(i,{offset:new BMap.Size(20,-10)})
+var myLabel=new BMap.Label(''+points[i][1],{offset:new BMap.Size(20,-10)});
+myLabel.setStyle({ color : "green", fontSize : "12px" ,cursor: "pointer"});
+myLabel.setTitle(''+points[i][1]);
+newMarker.setLabel(myLabel);
+myLabel.addEventListener("click",changeLabel);
+bm.addOverlay(newMarker);
+marksList.push(newMarker)
+// bm.setCenter(points[i]);
+}
+
+
+var time1=window.setInterval(reloadData,10000);
+// 设置车与编号的对应关系
+var dictionary = new Dictionary();
+dictionary.set('83', 'LS4ASE2E0HA458956');
+dictionary.set('84', 'LS4ASE2E6HA458878');
+dictionary.set('43', '云AA6026');
+dictionary.set('36', '云AB0589');
+dictionary.set('38', '云AC2019');
+dictionary.set('115', '云A72659');
+dictionary.set('113', '云AMV295');
+dictionary.set('27', '民航D4175');
+dictionary.set('45', '民航D4178');
+dictionary.set('60', '民航D4256');
+dictionary.set('28', '民航D4279');
+dictionary.set('16', '民航D4280');
+dictionary.set('50', '民航D4288');
+dictionary.set('29', '民航D4289');
+dictionary.set('30', '民航D4296');
+dictionary.set('13', '民航D4297');
+dictionary.set('42', '民航D4299');
+dictionary.set('26', '民航D4371');
+dictionary.set('47', '民航D4372');
+dictionary.set('56', '民航D4373');
+dictionary.set('23', '民航D4374');
+dictionary.set('37', '民航D4377');
+dictionary.set('8', '民航D4395');
+dictionary.set('19', '民航D4396');
+dictionary.set('52', '民航D4397');
+dictionary.set('41', '民航D4398');
+dictionary.set('12', '民航D4399');
+dictionary.set('6', '民航D4423');
+dictionary.set('61', '民航D4424');
+dictionary.set('49', '民航D5308');
+dictionary.set('18', '民航D5309');
+dictionary.set('24', '民航D5310');
+dictionary.set('4', '民航D5312');
+dictionary.set('55', '民航D5313');
+dictionary.set('112', '民航D5367');
+dictionary.set('34', '民航D5389');
+dictionary.set('11', '民航D5390');
+dictionary.set('9', '民航D5391');
+dictionary.set('40', '民航D5392');
+dictionary.set('48', '民航D5393');
+dictionary.set('10', '民航D5394');
+dictionary.set('3', '民航D5395');
+dictionary.set('35', '民航D6645');
+dictionary.set('31', '民航D6647');
+dictionary.set('32', '民航D6648');
+dictionary.set('44', '民航D6649');
+dictionary.set('15', '民航D6653');
+dictionary.set('20', '民航D6654');
+dictionary.set('51', '民航D6655');
+dictionary.set('33', '民航D6656');
+dictionary.set('1', '民航D6657');
+dictionary.set('25', '民航D6658');
+dictionary.set('17', '民航D6659');
+dictionary.set('114', '民航D6893');
+dictionary.set('59', '民航D6895');
+dictionary.set('39', '民航D6896');
+dictionary.set('58', '民航D6897');
+dictionary.set('2', '民航D6898');
+dictionary.set('54', '民航D6899');
+dictionary.set('21', '民航D6920');
+dictionary.set('7', '民航D6932');
+dictionary.set('5', '民航D6933');
+dictionary.set('22', '民航D6934');
+dictionary.set('80', '民航D4291');
+dictionary.set('79', '民航D4378');
+dictionary.set('81', '民航D6646');
+dictionary.set('85', '民航D6957');
+dictionary.set('74', '民航D7245');
+dictionary.set('76', '民航D7246');
+dictionary.set('82', '民航D7247');
+dictionary.set('73', '民航D7248');
+
+function reloadData() {
+    var httpRequest=new XMLHttpRequest();
+   // 去除已有的标注
+    for (var ma=0;ma<marksList.length;ma++){
+        bm.removeOverlay(marksList[ma])
+
+    }
+
+
+    httpRequest.open("GET","http://119.254.234.117:28080/openapi/carGps");
+    httpRequest.send();
+
+    httpRequest.onload=function () {
+
+        var myData=httpRequest.responseText;
+        var  jsonData=eval(myData);
+
+        var tempLabels=[]
+
+        for (var i=0;i<jsonData.length;i++)
+
+            for(var j=0;j<idOfCars.length;j++){
+
+                if(jsonData[i]["vehicle_id"]==idOfCars[j]) {
+
+                var tempText='[' + jsonData[i]["vehicle_id"]+"车"+dictionary.get(jsonData[i]["vehicle_id"])+"]"+"["+new Date(jsonData[i]["gps_time"]).toLocaleString()+"]";
+                var myLabelTempt = new BMap.Label(tempText, {offset: new BMap.Size(20, -10)});
+                myLabelTempt.setTitle(tempText);
+                myLabelTempt.setStyle({color: "green", fontSize: "12px",cursor: "pointer"});
+                tempLabels.push(myLabelTempt);
+                var tempLng = jsonData[i]["lng"];
+                var tempLat = jsonData[i]["lat"];
+                var result=wgs2bd(parseFloat(tempLat),parseFloat(tempLng));
+                 var newMarker = new BMap.Marker(new BMap.Point(result[1], result[0]), {icon: myIcon});
+                newMarker.setLabel(myLabelTempt);
+                myLabelTempt.addEventListener("click",changeLabel);
+                marksList.push(newMarker);
+                bm.addOverlay(newMarker);
+
+
+            }
+        }
+
+
+
+    }
+
+
+}
+
+// 注册点击事件
+function changeLabel(e) {
+
+    var p = e.target;
+    console.log(p.toString());
+
+    alert(""+p.title);
+
+
+}
+//世界大地坐标转为百度坐标
+var pi = 3.14159265358979324;
+var a = 6378245.0;
+var ee = 0.00669342162296594323;
+// 返回的结果第一位是lng第二位是lat
+function wgs2bd(lat,lon) {
+
+    // alert("在进行坐标转换")
+    var wgs2gcjR = wgs2gcj(lat, lon);
+    var gcj2bdR = gcj2bd(wgs2gcjR[0], wgs2gcjR[1]);
+    return gcj2bdR;
+};
+function gcj2bd(lat,lon) {
+    var pi = 3.14159265358979324;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+    var x_pi = 3.14159265358979324*3000.0/180.0;
+    var x = lon, y = lat;
+    var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+    var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+    var bd_lon = z * Math.cos(theta) + 0.0065;
+    var bd_lat = z * Math.sin(theta) + 0.006;
+    var result = [];
+    result.push(bd_lat);
+    result.push(bd_lon);
+    return result;
+};
+
+function wgs2gcj(lat,lon) {
+    var pi = 3.14159265358979324;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+    var x_pi = 3.14159265358979324*3000.0/180.0;
+    var dLat = transformLat(lon - 105.0, lat - 35.0);
+    var dLon = transformLon(lon - 105.0, lat - 35.0);
+    var radLat = lat / 180.0 * pi;
+    var magic = Math.sin(radLat);
+    magic = 1 - ee * magic * magic;
+    var sqrtMagic = Math.sqrt(magic);
+    dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+    dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
+    var mgLat = lat + dLat;
+    var mgLon = lon + dLon;
+    var result = [];
+    result.push(mgLat);
+    result.push(mgLon);
+    return result;
+};
+
+function transformLat(lat,lon) {
+
+    var pi = 3.14159265358979324;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+    var x_pi = 3.14159265358979324*3000.0/180.0;
+    var ret = -100.0 + 2.0 * lat + 3.0 * lon + 0.2 * lon * lon + 0.1 * lat * lon + 0.2 * Math.sqrt(Math.abs(lat));
+    ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+    ret += (20.0 * Math.sin(lon * pi) + 40.0 * Math.sin(lon / 3.0 * pi)) * 2.0 / 3.0;
+    ret += (160.0 * Math.sin(lon / 12.0 * pi) + 320 * Math.sin(lon * pi  / 30.0)) * 2.0 / 3.0;
+    return ret;
+};
+
+function transformLon(lat,lon) {
+    var pi = 3.14159265358979324;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+    var x_pi = 3.14159265358979324*3000.0/180.0;
+
+    var ret = 300.0 + lat + 2.0 * lon + 0.1 * lat * lat + 0.1 * lat * lon + 0.1 * Math.sqrt(Math.abs(lat));
+    ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+    ret += (20.0 * Math.sin(lat * pi) + 40.0 * Math.sin(lat / 3.0 * pi)) * 2.0 / 3.0;
+    ret += (150.0 * Math.sin(lat / 12.0 * pi) + 300.0 * Math.sin(lat / 30.0 * pi)) * 2.0 / 3.0;
+    return ret;
+};
+function Dictionary() {
+  let items = {}
+
+  // 如果某个键值存在于这个字典中，则返回true，则返回false
+  this.has = key => {
+    return key in items
+  }
+
+  // 向字典中添加新元素
+  this.set = (key, value) => {
+    items[key] = value
+  }
+
+  // remove通过使用键值来从字典中移除键值对的数据值
+  this.remove = key => {
+    if (this.has(key)) {
+      delete items[key]
+      return true
+    }
+    return false
+  }
+
+  // get通过键值查找特定的数值并返回
+  this.get = key => {
+    return this.has(key) ? items[key] : undefined
+  }
+
+  // 以数组形式返回字典中所有values实例的值
+  this.values = () => {
+    let values = []
+    for (let k in items) {
+      if (this.has(k)) {
+        values.push(items[k])
+      }
+    }
+    return values
+  }
+
+  this.clear = () => {
+    return items = {}
+  }
+
+  this.size = () => {
+    return Object.keys(items).length
+  }
+
+  this.keys = () => {
+    return Object.keys(items)
+  }
+
+  this.getItems = () => {
+    return items
+  }
+}
+
+// 测试
+// var dictionary = new Dictionary()
+// dictionary.set('A', 'aaa@aaa.com')
+// dictionary.set('B', 'bbb@bbb.com')
+// dictionary.set('C', 'ccc@ccc.com')
+//
+// console.log(dictionary.has('A'))
+// console.log(dictionary.size())
+// console.log(dictionary.keys())
+// console.log(dictionary.get('B'))
+// console.log(dictionary.values())
+//
+// console.log(dictionary.remove('A'))
+// console.log(dictionary.keys())
+// console.log(dictionary.values())
+// console.log(dictionary.getItems())
+
+
+
+
+
+</script>
