@@ -58,7 +58,8 @@ if __name__ == '__main__':
     # 基础数据
     dataBase = myDataBase()
     # data = dataBase.getDataTwo()
-    data = dataBase.getDataThree().iloc[:200,:]
+    initialData,data = dataBase.getDataThree()
+    data=data.iloc[:200,:]
     ##对国际和国内航班进行统计
     # 航班号以这几个开头的为国际[QW,EU,CF,A6, UW,O3,QV,FD,UL]
 
@@ -188,7 +189,7 @@ if __name__ == '__main__':
     gatePlanDict=funcForColumn.getPlanToGate(resultInf,internationalGateInf,nationalGateInf,atimList, dtimList)
     #第二种贪心分配方法
     printResult.gateToPlan(gatePlanDict, atimList, dtimList, numberOfPlan, nationOfPlan, typeOfplan, allGate)
-    gatePlanDict2=funcForColumn.gateToPlanMethodsTwo(allGate,result,atimList,dtimList,nationOfResult,typeOfResult)
+    gatePlanDict2=funcForColumn.gateToPlanMethodsTwo(allGate,result,resultInf,atimList,dtimList,nationOfResult,typeOfResult)
     print("------------------------贪心法计算结果--------------------->")
     printResult.gateToPlan(gatePlanDict2, atimList, dtimList, numberOfPlan, nationOfPlan, typeOfplan, allGate)
     printResult.analysisOfPlans(result, data, dataNearByHum, resultInf, atimList)

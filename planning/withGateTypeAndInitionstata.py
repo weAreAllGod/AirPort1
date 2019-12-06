@@ -33,6 +33,7 @@ if __name__ == '__main__':
     ##对于初始航班只关心停在近机位的,近机位从101到169
     initalData=initalData.loc[initalData["parkinggate"].isin(range(101,169))]
     data=data.iloc[:150,:]
+    #表示前lenInitalData的条件取等
     lenInitalData=len(initalData)
     # 国内航班停机位27,国际航班停机位38
     ##除了互斥时间外，还考虑了近机位数量限制，机位的类型限制,类型包括C,D,E,F四种类型的停机位
@@ -49,10 +50,13 @@ if __name__ == '__main__':
 
     #进行去除过夜航班的操作，过夜航班不放在近机位
     minAtime=data["atime"].min()
-    data = data.loc[data["dtime"]<(pd.Timestamp(str(minAtime)[:10]+" 00:00:00")+pd.Timedelta("1 days"))]
+    #总的数据
+    data=pd.concat([initalData, data]).reset_index(drop=True)
+    #去除过夜的后
+    # mydata = data.loc[data["dtime"]<(pd.Timestamp(str(minAtime)[:10]+" 00:00:00")+pd.Timedelta("1 days"))]
     # 将初始条件合并到要分配的航班中去
-    mydata = pd.concat([initalData, data]).reset_index(drop=True)
-    mydata=mydata.sort_values(by=["atime"]).reset_index(drop=True)
+
+    mydata=data.sort_values(by=["atime"]).reset_index(drop=True)
     bridgeNumber = allNumber
     # 人工分配结果
     # dataNearByHum=mydata.loc[mydata["gate"].isin(dataBase.gateInf()[0]["gateno"].to_list())]
@@ -87,8 +91,8 @@ if __name__ == '__main__':
         typeOfParas.append(max([numberOfTypeForPlan[i] for i in everyPara]))
         nationOfParas.append(max([nationOfPlan[i] for i in everyPara]))
     # 国际F只能停国际F的飞机，国际E可以停国际E和F,国际D可以停国际E,F,D.国际C,可以停C,D,E,F。
-    # 国内F可以停国内F和国际F,国内E可以停国内E,F和国际E,F,国内D可以停国内D,E,F以及国际的D,E,F,国内C，可以停国内C,D,E,F和国际的C,D,E,F
-    reMatrix = np.zeros((len(atimList) + 8, len(possibles)))
+    #（总共8个条件,再加上初始条件，有几个就加几个条件总共lenInitalData） 国内F可以停国内F和国际F,国内E可以停国内E,F和国际E,F,国内D可以停国内D,E,F以及国际的D,E,F,国内C，可以停国内C,D,E,F和国际的C,D,E,F
+    reMatrix = np.zeros((len(atimList) + 8+lenInitalData, len(possibles)))
     #国际F型停机位的限制
     for i in range(reMatrix.shape[1]):
         reMatrix[0,i]=1 if (typeOfParas[i]==3 and nationOfParas[i]==1) else 0
@@ -113,6 +117,21 @@ if __name__ == '__main__':
         reMatrix[6, i] = 1 if (typeOfParas[i] in [1,2, 3]) else 0
     reMatrix[7,:]=[1 for i in range(reMatrix.shape[1])]
 
+    '''
+    这里的理解和下标问题太容易出错了
+    '''
+    # 中间加上lenInitalData的约束
+    for j in range(lenInitalData):
+        for jj in range(reMatrix.shape[1]):
+            #从第8行开始写
+            reMatrix[8+j,jj]=1 if j in possibles[jj] else 0
+    # 后面飞机的约束
+    for i1 in range(lenInitalData,len(atimList)):
+        for ii in range(reMatrix.shape[1]):
+            reMatrix[i1+8, ii] = 1 if i1 in possibles[ii] else 0
+
+
+
     ##b的设置要与上面对应
     b = [1 for i in range(reMatrix.shape[0])]
     # 对应上面的近机位约束，国际约束，F,E,D型约束，共5各约束
@@ -126,10 +145,16 @@ if __name__ == '__main__':
     b[6] = sum(internationalType[-3:] + nationalType[-3:])
     b[7] = sum(internationalType + nationalType)
 
-    for i in range(len(atimList)):
-        for j, possible in enumerate(possibles):
-            if i in possible:
-                reMatrix[i + 8, j] = 1
+
+    # 约束的等号
+    my_sense = ""
+    for i in range(8):
+        my_sense += 'L'
+    for j in range(8,8+lenInitalData):
+        my_sense+="E"
+    for j1 in range(8+lenInitalData,8+lenInitalData+len(atimList)):
+        my_sense+="L"
+
     print("矩阵数据准备完毕", datetime.datetime.now() - beginTime)
     # 这里是靠桥的c
     c = [len(i) for i in possibles]
@@ -143,7 +168,7 @@ if __name__ == '__main__':
         for i in fa:
             totalNumer += passengers[i]
         pc.append(totalNumer)
-    my_prob = cplexSoverMain(c, reMatrix, b, "I")
+    my_prob = cplexSoverMain(c, reMatrix, b, "I",my_sense)
     my_prob.write("../state/data/problem.lp")
     my_prob.solution.write("../state/data/result.lp")
     x = my_prob.solution.get_values()
@@ -166,6 +191,8 @@ if __name__ == '__main__':
     print("------------------------贪心法计算结果--------------------->")
 
     printResult.gateToPlan(gatePlanDict2, atimList, dtimList, numberOfPlan, nationOfPlan, typeOfplan, allGate)
+
+
     dataBase.putDataIntoBrowerJson(gatePlanDict2,typeOfplan,nationOfPlan,atimList,dtimList,numberOfPlan,allGate)
     printResult.analysisOfPlans(result, data, dataNearByHum, resultInf, atimList)
 

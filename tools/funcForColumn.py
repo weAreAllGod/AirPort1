@@ -378,5 +378,6 @@ def gateToPlanMethodsTwo(allGate,result,resultInf,atimList,dtimList,nationOfResu
             for key in resultDict.keys():
                 resultDict[key] = result[resultDict[key]]
             return resultDict
-
+    for key in resultDict.keys():
+        resultDict[key] = result[resultDict[key]]
     return resultDict

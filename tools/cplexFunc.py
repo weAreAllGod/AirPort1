@@ -3,7 +3,7 @@ from cplex.exceptions import CplexError
 from cplex._internal import ProblemType
 from cplex._internal import _constants
 
-def cplexSoverMain(v_c, v_matrix,v_b,vType):
+def cplexSoverMain(v_c, v_matrix,v_b,vType,my_sense):
     try:
         my_prob = cplex.Cplex()
         my_obj = v_c
@@ -33,11 +33,10 @@ def cplexSoverMain(v_c, v_matrix,v_b,vType):
         my_rhs = list(v_b)
 
         my_rownames = ["r" + str(i) for i in range(v_matrix.shape[0])]
-        my_sense = ""
-        for i in range(v_matrix.shape[0]):
-            my_sense += 'L'
+
         my_prob.linear_constraints.add(lin_expr=rows, senses=my_sense,
                                        rhs=my_rhs, names=my_rownames)
+        my_prob.write("test.lp")
         print("求解开始")
         my_prob.solve()
     except CplexError as exc:
