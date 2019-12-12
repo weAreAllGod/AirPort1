@@ -20,7 +20,7 @@ def cplexSoverMain(v_c, v_matrix,v_b,vType,my_sense):
         # names = my_colnames
         # my_colnames = ["y1", "y2", "y3", "y4"]
 
-        my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,types = my_ctype,
+        my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
                               names=my_colnames)
         # types = my_ctype,
 
@@ -36,7 +36,6 @@ def cplexSoverMain(v_c, v_matrix,v_b,vType,my_sense):
 
         my_prob.linear_constraints.add(lin_expr=rows, senses=my_sense,
                                        rhs=my_rhs, names=my_rownames)
-        my_prob.write("test.lp")
         print("求解开始")
         my_prob.solve()
     except CplexError as exc:
@@ -198,3 +197,43 @@ def cplexForSecondPro(parasForSecondPro,allBounds,result):
         return my_prob
     except CplexError as exc:
         print(exc)
+def cplexSoverBranchPrice(v_c, v_matrix,v_b,vType,my_sense,indexBoundList):
+    try:
+        my_prob = cplex.Cplex()
+        my_obj = v_c
+        my_prob.set_problem_type(my_prob.problem_type.LP)
+        # my_obj = [len(possible) for possible in possibles]
+        my_ub = [cplex.infinity for i in range(v_matrix.shape[1])]
+        my_lb = [0 for i in range(v_matrix.shape[1])]
+        for item in indexBoundList:
+            my_ub[item[0]]=item[1]
+            my_lb[item[0]]=item[1]
+        my_ctype = ""
+        for i in range(v_matrix.shape[1]):
+            my_ctype += vType
+        #
+        my_colnames = ["y" + str(i) for i in range(v_matrix.shape[1])]
+        # names = my_colnames
+        # my_colnames = ["y1", "y2", "y3", "y4"]
+
+        my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
+                              names=my_colnames)
+        # types = my_ctype,
+
+        my_prob.objective.set_sense(my_prob.objective.sense.maximize)
+        rows = []
+        for i in range(v_matrix.shape[0]):
+
+            thisLinstraint = [my_colnames,list(v_matrix[i,:])]
+            rows.append(thisLinstraint)
+        my_rhs = list(v_b)
+
+        my_rownames = ["r" + str(i) for i in range(v_matrix.shape[0])]
+
+        my_prob.linear_constraints.add(lin_expr=rows, senses=my_sense,
+                                       rhs=my_rhs, names=my_rownames)
+        print("求解开始")
+        my_prob.solve()
+    except CplexError as exc:
+        print(exc)
+    return my_prob

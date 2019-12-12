@@ -59,7 +59,7 @@ if __name__ == '__main__':
     dataBase = myDataBase()
     # data = dataBase.getDataTwo()
     initialData,data = dataBase.getDataThree()
-    data=data.iloc[:200,:]
+    data=data.iloc[:250,:]
     ##对国际和国内航班进行统计
     # 航班号以这几个开头的为国际[QW,EU,CF,A6, UW,O3,QV,FD,UL]
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     numberOfTypeForPlan=mydata["mdl"].apply(lambda x:getTypeOfPosition(x[-1])).to_list()
     # 机位的国际国内类型国内是0，国际是1
     # typeOfNation=mydata["dflightno"].apply(lambda x:getTypeOfNation(x[:-4],internationalTitle)).to_list()
-    beginTime = datetime.datetime.now()
+    time1 = datetime.datetime.now()
     listNodes=[]
     lenAtimeList=len(atimList)
     for i in range(lenAtimeList):
@@ -106,7 +106,8 @@ if __name__ == '__main__':
         listNodes.append(thisNode)
 
     possibles = funcForColumn.searcher2(listNodes)##里面存放的是所有的变量
-
+    time2 = datetime.datetime.now()
+    print("变量构建时间",time2-time1)
     # 每个变量所属的类型以及国际国内航班属性
     typeOfParas=[]
     nationOfParas=[]
@@ -152,12 +153,15 @@ if __name__ == '__main__':
     b[5] = sum(internationalType[-2:] + nationalType[-2:])
     b[6] = sum(internationalType[-3:] + nationalType[-3:])
     b[7] = sum(internationalType + nationalType)
-
+    # 符号
+    my_sense = ""
+    for i in range(len(b)):
+        my_sense += 'L'
     for i in range(len(atimList)):
         for j, possible in enumerate(possibles):
             if i in possible:
                 reMatrix[i + 8, j] = 1
-    print("矩阵数据准备完毕", datetime.datetime.now() - beginTime)
+
     # 这里是靠桥的c
     c = [len(i) for i in possibles]
     # 这里是靠桥人数的c
@@ -170,13 +174,18 @@ if __name__ == '__main__':
         for i in fa:
             totalNumer += passengers[i]
         pc.append(totalNumer)
-    my_prob = cplexSoverMain(c, reMatrix, b, "I")
+    time3=datetime.datetime.now()
+    print("模型构建时间", time3-time2)
+    my_prob = cplexSoverMain(c, reMatrix, b, "I",my_sense)
     my_prob.write("../state/data/problem.lp")
     my_prob.solution.write("../state/data/result.lp")
     x = my_prob.solution.get_values()
+
     print("Solution value  = ", my_prob.solution.get_objective_value())
     print('result: ')
     result = [possibles[index] for index, value in enumerate(x) if value == 1]
+    time4 = datetime.datetime.now()
+    print("Model1求解时间：",time4-time3)
     indexOfResult=[index for index, value in enumerate(x) if value == 1]
     print(result)
     typeOfResult = [typeOfParas[item] for item in indexOfResult]
@@ -188,8 +197,11 @@ if __name__ == '__main__':
     # 这里是第一种方法，用n个哈密尔顿通路进行拼接
     gatePlanDict=funcForColumn.getPlanToGate(resultInf,internationalGateInf,nationalGateInf,atimList, dtimList)
     #第二种贪心分配方法
+    time5 = datetime.datetime.now()
     printResult.gateToPlan(gatePlanDict, atimList, dtimList, numberOfPlan, nationOfPlan, typeOfplan, allGate)
     gatePlanDict2=funcForColumn.gateToPlanMethodsTwo(allGate,result,resultInf,atimList,dtimList,nationOfResult,typeOfResult)
+    time6 = datetime.datetime.now()
+    print("Model2求解时间：",time6-time5)
     print("------------------------贪心法计算结果--------------------->")
     printResult.gateToPlan(gatePlanDict2, atimList, dtimList, numberOfPlan, nationOfPlan, typeOfplan, allGate)
     printResult.analysisOfPlans(result, data, dataNearByHum, resultInf, atimList)

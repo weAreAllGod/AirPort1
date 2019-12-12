@@ -1,5 +1,6 @@
 import copy
 import pandas as pd
+from planning import withGateTypeAndInitialsata
 from tools.dataBase import myDataBase
 class treeNote:
     myPointer=0
@@ -371,13 +372,104 @@ def gateToPlanMethodsTwo(allGate,result,resultInf,atimList,dtimList,nationOfResu
         thisResult = canBeChoose[beChooseIndex]
         beUsedResult.append(thisResult)
         gateSum[nationOfResult[thisResult]][typeOfResult[thisResult]] -= 1
-        needGateSum[nationOfResult[thisResult]][typeOfResult[thisResult]] += 1
+        needGateSum[1 if thisNationOfGate == "国际" else 0][tempDict[thisTypeOfGate]] -= 1
         if len(beUsedResult) == len(result) and max(resultDict.keys()) != "168":
             # for i in range(int(max(resultDict.keys()))-1,169):
             #     resultDict[str(i)]=[]
             for key in resultDict.keys():
                 resultDict[key] = result[resultDict[key]]
             return resultDict
+    for key in resultDict.keys():
+        resultDict[key] = result[resultDict[key]]
+    return resultDict
+
+def gateToPlanWithInitialStata(initalData,allGate,result,resultInf,atimList,dtimList,nationOfResult,typeOfResult):
+
+    nationalType = [22, 28, 4, 1]
+    internationalType = [3, 7, 2, 1]
+    # gateNumber存储国内国际停机位的类型分别表示c,d,e,f
+    gateSum = [nationalType, internationalType]
+    needGateSum = [[len(resultInf[7]), len(resultInf[6]), len(resultInf[5]), len(resultInf[4])],
+                   [len(resultInf[3]), len(resultInf[2]), len(resultInf[1]), len(resultInf[0])]]
+    dontConflictList, conflictList = conflictForResult(atimList, dtimList, result)
+    beUsedResult = []
+    resultDict = {}
+    tempDict = {"C": 0, "D": 1, "E": 2, "F": 3}
+    initialDict={}
+    for i in range(len(initalData)):
+        for j,value in enumerate(result):
+            if i in value:
+                initialDict[initalData.iloc[i,:]["parkinggate"]]=j
+    for gate in range(101, 169):
+        thisTypeOfGate = allGate.loc[allGate["gateno"] == str(gate)]["mdl"].iloc()[0]
+        thisNationOfGate = allGate.loc[allGate["gateno"] == str(gate)]["nation"].iloc()[0]
+        if gate in initialDict.keys():
+            resultDict[str(gate)]=initialDict[gate]
+            nationOfThisGate=1 if allGate[allGate["gateno"]==str(gate)]["nation"].iloc()[0]=="国际" else 0
+            typeOfThisGate=withGateTypeAndInitialsata.getTypeOfPosition(allGate[allGate["gateno"] == str(gate)]["mdl"].iloc()[0])
+            gateSum[nationOfThisGate][typeOfThisGate] -= 1
+            needGateSum[1 if thisNationOfGate == "国际" else 0][tempDict[thisTypeOfGate]] -= 1
+            beUsedResult.append(initialDict[gate])
+        else:
+            allCanBeChoosed = []
+            if thisNationOfGate == "国际":
+                # shouldEleaved = sum(needGateSum[1][:tempDict[thisTypeOfGate]+1]) - sum(
+                #     [gateSum[1][i] - beUsedGateSum[1][i] for i in range(tempDict[thisTypeOfGate]+1)])
+                # 说明需要从国际的分配方案里面选取
+                if sum(needGateSum[1][:tempDict[thisTypeOfGate] + 1]) >= sum(gateSum[1][:tempDict[thisTypeOfGate] + 1]):
+                    for i in range(tempDict[thisTypeOfGate], -1, -1):
+                        allCanBeChoosed.append([index for index, thisValue in enumerate(nationOfResult) if (
+                                thisValue == 1 and typeOfResult[index] == i and index not in beUsedResult and index not in initialDict.values())])
+
+                else:  # 说明可以从国内国外选取，优先选取国际的
+                    for i in range(tempDict[thisTypeOfGate], -1, -1):
+                        allCanBeChoosed.append([index for index, thisValue in enumerate(nationOfResult) if
+                                                (thisValue == 1 and typeOfResult[index] == i and index not in beUsedResult and index not in initialDict.values())])
+                        allCanBeChoosed.append([index for index, thisValue in enumerate(nationOfResult) if
+                                                (thisValue == 0 and typeOfResult[
+                                                    index] == i and index not in beUsedResult and index not in initialDict.values())])
+            else:
+                for i in range(tempDict[thisTypeOfGate], -1, -1):
+                    allCanBeChoosed.append([index for index, thisValue in enumerate(nationOfResult) if
+                                            (thisValue == 0 and typeOfResult[index] == i and index not in beUsedResult and index not in initialDict.values())])
+
+            ##从可用结果中选出与上一个机位能够相连的机位
+            canBeChoose = []
+
+            if len(resultDict.keys()) == 0:
+                for item in allCanBeChoosed:
+                    if len(item) != 0:
+                        canBeChoose = item
+            else:
+                previousResult = resultDict[str(int(gate) - 1)]
+                for thisOne in allCanBeChoosed:  # 优先分配与改机型最对应得那个方案
+                    canBeChoose = [item for item in thisOne if item in dontConflictList[previousResult].noConflicts]
+                    if len(canBeChoose) != 0:
+                        break
+                    elif len(canBeChoose) == 0 and len(thisOne) != 0:
+                        canBeChoose = thisOne
+                        break
+                    else:
+                        pass
+            if len(canBeChoose)==0:
+                canBeChoose = [item for item in set([i for i in range(len(result))]).difference(beUsedResult + list(initialDict.values()))]
+
+            # dCanBeChoose = [len(set(dontConflictList[item].noConflicts).difference(beUsedResult)) for item in
+            #                 canBeChoose]
+            dCanBeChoose = [len(set(dontConflictList[item].noConflicts)) for item in
+                            canBeChoose]
+            beChooseIndex = dCanBeChoose.index(min(dCanBeChoose))
+            resultDict[str(gate)] = canBeChoose[beChooseIndex]
+            thisResult = canBeChoose[beChooseIndex]
+            beUsedResult.append(thisResult)
+
+            gateSum[nationOfResult[thisResult]][typeOfResult[thisResult]] -= 1
+            needGateSum[1 if thisNationOfGate == "国际" else 0][tempDict[thisTypeOfGate]] -= 1
+
+            if len(beUsedResult) == len(result) and max(resultDict.keys()) != "168":
+                for key in resultDict.keys():
+                    resultDict[key] = result[resultDict[key]]
+                return resultDict
     for key in resultDict.keys():
         resultDict[key] = result[resultDict[key]]
     return resultDict
