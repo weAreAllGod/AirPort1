@@ -108,10 +108,10 @@ if __name__ == '__main__':
 
 
 
-    # for index,gate in enumerate(assignment):
-    #     for everyPlane in gate:
-    #         allSeconds=int((everyPlane[-1] - everyPlane[-2]).total_seconds())
-    #         plt.plot(pd.date_range(start=everyPlane[-2],end=everyPlane[-1],periods=allSeconds),[index for i in range(allSeconds)])
+    for index,gate in enumerate(assignment):
+        for everyPlane in gate:
+            allSeconds=int((everyPlane[-1] - everyPlane[-2]).total_seconds())
+            plt.plot(pd.date_range(start=everyPlane[-2],end=everyPlane[-1],periods=allSeconds),[index for i in range(allSeconds)])
 
 
 

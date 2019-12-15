@@ -11,17 +11,22 @@ def cplexSoverMain(v_c, v_matrix,v_b,vType,my_sense):
         # my_obj = [len(possible) for possible in possibles]
         my_ub = [cplex.infinity for i in range(v_matrix.shape[1])]
         my_lb = [0 for i in range(v_matrix.shape[1])]
-
-        my_ctype = ""
-        for i in range(v_matrix.shape[1]):
-            my_ctype += vType
+        if vType==None:
+            my_ctype=None
+        else:
+            my_ctype = ""
+            for i in range(v_matrix.shape[1]):
+                my_ctype += vType
         #
         my_colnames = ["y" + str(i) for i in range(v_matrix.shape[1])]
         # names = my_colnames
         # my_colnames = ["y1", "y2", "y3", "y4"]
-
-        my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
+        if vType==None:
+            my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
                               names=my_colnames)
+        else:
+            my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
+                                  names=my_colnames, types=my_ctype)
         # types = my_ctype,
 
         my_prob.objective.set_sense(my_prob.objective.sense.maximize)
@@ -208,16 +213,22 @@ def cplexSoverBranchPrice(v_c, v_matrix,v_b,vType,my_sense,indexBoundList):
         for item in indexBoundList:
             my_ub[item[0]]=item[1]
             my_lb[item[0]]=item[1]
-        my_ctype = ""
-        for i in range(v_matrix.shape[1]):
-            my_ctype += vType
+        if vType==None:
+            my_ctype=None
+        else:
+            my_ctype = ""
+            for i in range(v_matrix.shape[1]):
+                my_ctype += vType
         #
         my_colnames = ["y" + str(i) for i in range(v_matrix.shape[1])]
         # names = my_colnames
         # my_colnames = ["y1", "y2", "y3", "y4"]
-
-        my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
+        if vType==None:
+            my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
                               names=my_colnames)
+        else:
+            my_prob.variables.add(obj=my_obj, lb=my_lb, ub=my_ub,
+                                  names=my_colnames, types =my_ctype)
         # types = my_ctype,
 
         my_prob.objective.set_sense(my_prob.objective.sense.maximize)

@@ -58,8 +58,8 @@ if __name__ == '__main__':
     # 基础数据
     dataBase = myDataBase()
     # data = dataBase.getDataTwo()
-    initialData,data = dataBase.getDataThree()
-    data=data.iloc[:250,:]
+    initialData,alldata = dataBase.getDataThree()
+    data=alldata.iloc[:120,:]
     ##对国际和国内航班进行统计
     # 航班号以这几个开头的为国际[QW,EU,CF,A6, UW,O3,QV,FD,UL]
 

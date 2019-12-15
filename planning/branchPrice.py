@@ -144,11 +144,14 @@ while True:
     # my_prob.solution.write("../state/data/result.lp")
     print("------------------------>以下为对偶问题<----------------------------")
     # 对偶问题
-    d_c=b
-    d_reMatrix=tempReMatrix.T
-    d_b=tempC
-    my_prob=cplexSoverDual(d_c,d_reMatrix,d_b,"C")
-    x1 = my_prob.solution.get_values()
+    # d_c=b
+    # d_reMatrix=tempReMatrix.T
+    # d_b=tempC
+    my_sense2 = ""
+    for i in range(len(b)):
+        my_sense2 += "L"
+    my_prob=cplexSoverMain(tempC,tempReMatrix,b,None,my_sense2 )
+    x1 = my_prob.solution.get_dual_values()
 
     thisReMatrix=reMatrix.T
     sigmas=np.array(c)-np.sum(thisReMatrix*np.array(x1),axis=1)
@@ -163,8 +166,9 @@ while True:
     #         maxSigmaI=i
     # 判断检验数
     print("本次的检验数：",maxSigma)
+    print("本次最优解",my_prob.solution.get_objective_value())
     if maxSigma<=0.01 or (maxSigmaI in beChoosed):
-        全局最优解是103
+
         result=[possibles[index] for index,value in enumerate(x) if value==1]
         my_sense1=""
         for i in range(tempReMatrix.shape[0]):

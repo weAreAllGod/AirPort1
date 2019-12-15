@@ -69,20 +69,19 @@ if __name__ == '__main__':
     """
     # possibles = searcher2(listNodes)
 
-    # listNodes = []
-    # lenAtimeList = len(atimList)
-    # result=[]
-    # for i in range(lenAtimeList):
-    #     thisDtime = dtimList[i]
-    #     thisList = []
-    #     for j in range(i + 1, lenAtimeList):
-    #         if atimList[j] - thisDtime < pd.Timedelta("0 days 00:20:00") or dtimList[j]-dtimList[i] < pd.Timedelta("0 days 00:20:00") or dtimList[j] - atimList[i] < pd.Timedelta("0 days 00:20:00") or atimList[j]-atimList[i] <pd.Timedelta("0 days 00:20:00") :
-    #             thisList.append(j)
-    #     result.append(thisList)
-        # thisNode = treeNote(i, thisList)
-        # listNodes.append(thisNode)
+    listNodes = []
+    lenAtimeList = len(atimList)
+    for i in range(lenAtimeList):
+        thisDtime = dtimList[i]
+        thisList = []
+        for j in range(i + 1, lenAtimeList):
+            if atimList[j] - thisDtime > pd.Timedelta("0 days 00:20:00"):
+                thisList.append(j)
+        thisNode = treeNote(i, thisList)
+        listNodes.append(thisNode)
 
-    possibles=dataBase.getPossibleTwo()
+    # possibles=dataBase.getPossibleTwo()
+    possibles = searcher2(listNodes)
     reMatrix=np.zeros((len(atimList)+1,len(possibles)))
     # 近机位约束
     reMatrix[0,:]=1
@@ -103,9 +102,13 @@ if __name__ == '__main__':
         for i in fa:
             totalNumer+=passengers[i]
         pc.append(totalNumer)
+
     b=[1 for i in range(reMatrix.shape[0])]
     b[0]=65
-    my_prob=cplexSoverMain(pc,reMatrix,b,"I")
+    mysense=""
+    for i in range(len(b)):
+        mysense+="L"
+    my_prob=cplexSoverMain(c,reMatrix,b,"I",mysense)
     my_prob.write("../state/data/problem.lp")
     my_prob.solution.write("../state/data/result.lp")
     print("Solution value  = ", my_prob.solution.get_objective_value())

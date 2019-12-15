@@ -25,7 +25,7 @@ dataBase=myDataBase()
 startTime=datetime.datetime.now()
 print("数据准备中...")
 initialData,data = dataBase.getDataThree()
-mydata=data.iloc[:150,:]
+mydata=data.iloc[:220,:]
 print("读取读取完毕...")
 
 bridgeNumber=65
@@ -102,12 +102,12 @@ for i in range(len(atimList)):
 print("数据准备完毕")
 
 ###求理论最优值
-c_all=[len(i) for  i in possibles]
-my_sense_all=""
-for i in range(reMatrix.shape[0]):
-    my_sense_all+="L"
-bestValueInTheore=cplexSoverMain(c_all,reMatrix,b,"C",my_sense_all)
-print("本问题的理论最优值为",bestValueInTheore.solution.get_objective_value())
+# c_all=[len(i) for  i in possibles]
+# my_sense_all=""
+# for i in range(reMatrix.shape[0]):
+#     my_sense_all+="L"
+# bestValueInTheore=cplexSoverMain(c_all,reMatrix,b,"C",my_sense_all)
+# print("本问题的理论最优值为",bestValueInTheore.solution.get_objective_value())
 # 如果用列生成算法求，没有必要再求解开始的时候将所有的情况都列举出来，可以大大的减少
 
 initLen=2000
